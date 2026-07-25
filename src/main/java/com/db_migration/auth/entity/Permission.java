@@ -1,11 +1,10 @@
 package com.db_migration.auth.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
+@Entity
+@Table(name = "permissions")
 @Getter
 @Setter
 @AllArgsConstructor

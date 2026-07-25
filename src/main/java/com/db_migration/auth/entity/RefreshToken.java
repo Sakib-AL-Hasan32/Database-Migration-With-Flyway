@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "refresh_tokens")
 @Getter
 @Setter
 @AllArgsConstructor
