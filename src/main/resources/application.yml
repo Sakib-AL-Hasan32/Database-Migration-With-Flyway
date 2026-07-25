@@ -22,3 +22,8 @@ spring:
 logging:
   level:
     org.flywaydb: INFO
+
+jwt:
+  secret-key: "mySecretKey-afdsjhaf-adkfjsha-askdjfhaj-adkjfhaf-asdfkjhajf-anhdkjfadshf-adfkjhajdf-asdlfjha-adskfjhadjsf-adfjhadf-adfkjhajf"
+  access-token-expiration: 5m
+  refresh-token-expiration: 3d
