@@ -3,10 +3,12 @@ package com.db_migration.auth.security.service.impl;
 import com.db_migration.auth.entity.Role;
 import com.db_migration.auth.entity.User;
 import com.db_migration.auth.security.service.JwtTokenService;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -51,5 +53,27 @@ public class JwtTokenServiceImpl implements JwtTokenService {
                 .expiration(expiration)
                 .signWith(generateSecretKey())
                 .compact();
+    }
+
+    @Override
+    public Claims extractClaimsFromToken(String token) {
+        return Jwts.parser()
+                .verifyWith(generateSecretKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    @Override
+    public String getUsernameFromToken(String token) {
+        Claims claims = extractClaimsFromToken(token);
+        return claims.getSubject();
+
+    }
+
+    @Override
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        String usernameFromToken = getUsernameFromToken(token);
+        return usernameFromToken.equals(userDetails.getUsername());
     }
 }

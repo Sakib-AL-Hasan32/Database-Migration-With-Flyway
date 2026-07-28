@@ -9,6 +9,7 @@ public final class ApiMessages {
     public static final class Success {
         public static final String REGISTER_SUCCESS = "Register successfully!";
         public static final String LOGIN_SUCCESS = "Login successfully!";
+        public static final String CATEGORY_CREATED = "Category created!";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -17,5 +18,6 @@ public final class ApiMessages {
         public static final String USER_ALREADY_EXISTS = "User already exists";
         public static final String EMAIL_ALREADY_EXISTS = "Email already exists";
         public static final String INVALID_ROLE = "Invalid role";
+        public static final String CATEGORY_ALREADY_EXISTS = "Category already exists";
     }
 }

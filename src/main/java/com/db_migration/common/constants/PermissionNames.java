@@ -1,0 +1,30 @@
+package com.db_migration.common.constants;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class PermissionNames {
+    public static final String CREATE_PRODUCT = "CREATE_PRODUCT";
+    public static final String UPDATE_PRODUCT = "UPDATE_PRODUCT";
+    public static final String DELETE_PRODUCT = "DELETE_PRODUCT";
+    public static final String VIEW_PRODUCT = "VIEW_PRODUCT";
+
+    public static final String CREATE_CATEGORY = "CREATE_CATEGORY";
+    public static final String UPDATE_CATEGORY = "UPDATE_CATEGORY";
+    public static final String DELETE_CATEGORY = "DELETE_CATEGORY";
+    public static final String VIEW_CATEGORY = "VIEW_CATEGORY";
+
+    public static final String CREATE_CART = "CREATE_CART";
+    public static final String UPDATE_CART = "UPDATE_CART";
+    public static final String DELETE_CART = "DELETE_CART";
+    public static final String VIEW_CART = "VIEW_CART";
+
+    public static final String CREATE_ORDER = "CREATE_ORDER";
+    public static final String UPDATE_ORDER = "UPDATE_ORDER";
+    public static final String DELETE_ORDER = "DELETE_ORDER";
+    public static final String VIEW_ORDER = "VIEW_ORDER";
+
+    public static final String MANAGE_INVENTORY = "MANAGE_INVENTORY";
+    public static final String VIEW_INVENTORY = "VIEW_INVENTORY";
+}
