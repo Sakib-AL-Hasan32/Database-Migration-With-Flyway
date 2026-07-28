@@ -35,7 +35,6 @@ public class AuthServiceImpl implements AuthService {
     private final RoleRepository roleRepository;
 
     @Override
-
     public ApiResponse<RegisterResponse> register(RegisterRequest registerRequest) {
         if (userRepository.existsByUsername(registerRequest.username())) {
             throw new IllegalArgumentException(ApiMessages.Error.USER_ALREADY_EXISTS);
