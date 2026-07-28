@@ -2,7 +2,6 @@ package com.db_migration.auth.security.service;
 
 import com.db_migration.auth.entity.User;
 
-public interface JwtTokenService {
-    String generateAccessToken(User user);
-
+public interface RefreshTokenService {
+    String generateRefreshToken(User user);
 }

@@ -1,0 +1,26 @@
+package com.db_migration.auth.enums;
+
+public enum PermissionCode {
+    CREATE_PRODUCT,
+    UPDATE_PRODUCT,
+    DELETE_PRODUCT,
+    VIEW_PRODUCT,
+
+    CREATE_CATEGORY,
+    UPDATE_CATEGORY,
+    DELETE_CATEGORY,
+    VIEW_CATEGORY,
+
+    CREATE_CART,
+    UPDATE_CART,
+    DELETE_CART,
+    VIEW_CART,
+
+    CREATE_ORDER,
+    UPDATE_ORDER,
+    DELETE_ORDER,
+    VIEW_ORDER,
+
+    MANAGE_INVENTORY,
+    VIEW_INVENTORY
+}
