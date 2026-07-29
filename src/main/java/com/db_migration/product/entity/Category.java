@@ -1,5 +1,6 @@
 package com.db_migration.product.entity;
 
+import com.db_migration.common.entity.AuditableEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,7 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Category {
+public class Category extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

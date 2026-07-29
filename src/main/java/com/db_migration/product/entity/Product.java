@@ -1,5 +1,6 @@
 package com.db_migration.product.entity;
 
+import com.db_migration.common.entity.AuditableEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Product {
+public class Product extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

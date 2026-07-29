@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.db_migration</groupId>
-	<artifactId>Database-Migration-with-Flyway</artifactId>
+	<artifactId>Inventory-Management-System</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name/>
 	<description/>
