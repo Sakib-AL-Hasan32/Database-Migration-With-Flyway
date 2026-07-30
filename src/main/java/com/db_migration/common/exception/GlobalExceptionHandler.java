@@ -5,6 +5,8 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.nio.file.AccessDeniedException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -24,6 +26,20 @@ public class GlobalExceptionHandler {
                 "Invalid token",
                 exception.getMessage()
         );
+    }
+
+    @ExceptionHandler(ResourceNotFound.class)
+    public ProblemDetail handleResourceNotFound(ResourceNotFound exception) {
+        return problemDetail(
+                HttpStatus.NOT_FOUND,
+                "Resource Not Found",
+                exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ProblemDetail handleAccessDenied(org.springframework.security.access.AccessDeniedException exception) {
+        return problemDetail(HttpStatus.FORBIDDEN, "Access Denied", exception.getMessage());
     }
 
     private ProblemDetail problemDetail(HttpStatus status, String title, String detail) {

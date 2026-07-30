@@ -21,8 +21,7 @@ public class AuditorAwareConfig {
     public AuditorAware<User> auditorAware() {
         return () -> {
 
-            Authentication authentication =
-                    SecurityContextHolder.getContext().getAuthentication();
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication == null
                     || !authentication.isAuthenticated()
@@ -32,7 +31,7 @@ public class AuditorAwareConfig {
 
             String username = authentication.getName();
 
-            return userRepository.findByUsername(username);
+            return userRepository.findByUsernameForAudit(username);
         };
     }
 }

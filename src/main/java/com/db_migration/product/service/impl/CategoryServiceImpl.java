@@ -1,13 +1,13 @@
 package com.db_migration.product.service.impl;
 
-import com.db_migration.auth.entity.User;
-import com.db_migration.auth.repository.UserRepository;
 import com.db_migration.common.constants.ApiMessages;
 import com.db_migration.common.constants.PermissionNames;
 import com.db_migration.common.exception.ResourceAlreadyExistsException;
+import com.db_migration.common.exception.ResourceNotFound;
 import com.db_migration.common.response.ApiResponse;
 import com.db_migration.common.response.PageResponse;
 import com.db_migration.product.dto.request.CategoryCreateRequest;
+import com.db_migration.product.dto.request.CategoryUpdateRequest;
 import com.db_migration.product.dto.response.CategoryResponse;
 import com.db_migration.product.entity.Category;
 import com.db_migration.product.repository.CategoryRepository;
@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -26,7 +25,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
-    private final UserRepository userRepository;
 
     @Override
     @PreAuthorize("hasAuthority('" + PermissionNames.CREATE_CATEGORY + "')")
@@ -57,6 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('" + PermissionNames.VIEW_CATEGORY + "')")
     public ApiResponse<PageResponse<CategoryResponse>> getAll(Pageable pageable) {
         Page<Category> page = categoryRepository.findAll(pageable);
         List<CategoryResponse> responses = new ArrayList<>();
@@ -72,7 +71,45 @@ public class CategoryServiceImpl implements CategoryService {
                     category.getUpdatedAt(),
                     category.getUpdatedBy().getUsername()
             );
+            responses.add(response);
         }
-        return null;
+        PageResponse<CategoryResponse> pageResponse = PageResponse.<CategoryResponse>builder()
+                .content(responses)
+                .page(page.getTotalPages())
+                .size(page.getSize())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .first(page.isFirst())
+                .last(page.isLast())
+                .prev(page.hasPrevious())
+                .next(page.hasNext())
+                .build();
+        return ApiResponse.<PageResponse<CategoryResponse>>builder()
+                .data(pageResponse)
+                .message(ApiMessages.Success.CATEGORY_FETCHED)
+                .build();
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('" + PermissionNames.UPDATE_CATEGORY + "')")
+    public ApiResponse<CategoryResponse> update(CategoryUpdateRequest categoryUpdateRequest, Long id) {
+        Category category = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.CATEGORY_NOT_FOUND));
+        category.setName(categoryUpdateRequest.name());
+        category.setDescription(categoryUpdateRequest.description());
+        Category saved = categoryRepository.save(category);
+        CategoryResponse response = new CategoryResponse(
+                saved.getId(),
+                saved.getName(),
+                saved.getDescription(),
+                saved.isActive(),
+                saved.getCreatedAt(),
+                saved.getCreatedBy().getUsername(),
+                saved.getUpdatedAt(),
+                saved.getUpdatedBy().getUsername()
+        );
+        return ApiResponse.<CategoryResponse>builder()
+                .data(response)
+                .message(ApiMessages.Success.CATEGORY_UPDATED)
+                .build();
     }
 }

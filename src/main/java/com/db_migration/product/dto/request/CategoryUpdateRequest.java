@@ -1,6 +1,14 @@
 package com.db_migration.product.dto.request;
 
-public record CategoryUpdateRequest(
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
+public record CategoryUpdateRequest(
+        @NotBlank(message = "Category name is required")
+        @Size(max = 100, message = "Category name cannot exceed 100 characters")
+        String name,
+
+        @Size(max = 300, message = "Description cannot exceed 300 characters.")
+        String description
 ) {
 }

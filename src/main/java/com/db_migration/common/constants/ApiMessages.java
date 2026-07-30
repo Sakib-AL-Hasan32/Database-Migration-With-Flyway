@@ -10,6 +10,8 @@ public final class ApiMessages {
         public static final String REGISTER_SUCCESS = "Register successfully!";
         public static final String LOGIN_SUCCESS = "Login successfully!";
         public static final String CATEGORY_CREATED = "Category created!";
+        public static final String CATEGORY_FETCHED = "Category fetched!";
+        public static final String CATEGORY_UPDATED = "Category updated!";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -19,5 +21,6 @@ public final class ApiMessages {
         public static final String EMAIL_ALREADY_EXISTS = "Email already exists";
         public static final String INVALID_ROLE = "Invalid role";
         public static final String CATEGORY_ALREADY_EXISTS = "Category already exists";
+        public static final String CATEGORY_NOT_FOUND = "Category not found";
     }
 }

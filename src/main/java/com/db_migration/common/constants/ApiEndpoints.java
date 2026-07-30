@@ -22,7 +22,8 @@ public final class ApiEndpoints {
     public static final class Category{
         public static final String BASE = VERSION + "/category";
         public static final String CREATE = "/create";
-        public static final String UPDATE = "/update";
+        public static final String UPDATE = "/update/{id}";
+        public static final String GET_ALL = "/getAll";
     }
 
 }
