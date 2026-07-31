@@ -12,6 +12,7 @@ public final class ApiMessages {
         public static final String CATEGORY_CREATED = "Category created!";
         public static final String CATEGORY_FETCHED = "Category fetched!";
         public static final String CATEGORY_UPDATED = "Category updated!";
+        public static final String CATEGORY_DELETED = "Category deleted!";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)

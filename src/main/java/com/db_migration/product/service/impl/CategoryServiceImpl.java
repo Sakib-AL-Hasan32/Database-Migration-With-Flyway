@@ -112,4 +112,16 @@ public class CategoryServiceImpl implements CategoryService {
                 .message(ApiMessages.Success.CATEGORY_UPDATED)
                 .build();
     }
+
+    @Override
+    @PreAuthorize("hasAuthority('" + PermissionNames.DELETE_CATEGORY + "')")
+    public ApiResponse<Void> delete(Long id) {
+        if(!categoryRepository.existsById(id)) {
+            throw new ResourceNotFound(ApiMessages.Error.CATEGORY_NOT_FOUND);
+        }
+        categoryRepository.deleteById(id);
+        return ApiResponse.<Void>builder()
+                .message(ApiMessages.Success.CATEGORY_DELETED)
+                .build();
+    }
 }

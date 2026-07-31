@@ -35,4 +35,9 @@ public class CategoryController {
     public ResponseEntity<ApiResponse<CategoryResponse>> update(@Valid @RequestBody CategoryUpdateRequest categoryUpdateRequest, @PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(categoryService.update(categoryUpdateRequest, id));
     }
+
+    @DeleteMapping(ApiEndpoints.Category.DELETE)
+    public ResponseEntity<ApiResponse<Void>> delete(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.delete(id));
+    }
 }
