@@ -14,6 +14,7 @@ public final class ApiMessages {
         public static final String CATEGORY_UPDATED = "Category updated!";
         public static final String CATEGORY_DELETED = "Category deleted!";
         public static final String PRODUCT_CREATED = "Product created!";
+        public static final String PRODUCT_FETCHED = "Product fetched!";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
