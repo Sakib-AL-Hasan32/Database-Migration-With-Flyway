@@ -35,10 +35,13 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @PreAuthorize("hasAuthority('" + PermissionNames.CREATE_PRODUCT + "')")
     public ApiResponse<ProductResponse> create(ProductCreateRequest productCreateRequest) {
+
         if(productRepository.existsBySku(productCreateRequest.sku())) {
             throw new ResourceAlreadyExistsException(ApiMessages.Error.PRODUCT_ALREADY_EXISTS);
         }
+
         Category category = categoryRepository.findById(productCreateRequest.categoryId()).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.CATEGORY_NOT_FOUND));
+
         Product product = Product.builder()
                 .name(productCreateRequest.name())
                 .description(productCreateRequest.description())
@@ -56,15 +59,8 @@ public class ProductServiceImpl implements ProductService {
                 .build();
         inventoryRepository.save(inventory);
 
-        ProductResponse response = new ProductResponse(
-                saved.getId(),
-                saved.getName(),
-                saved.getDescription(),
-                saved.getPrice(),
-                saved.getSku(),
-                saved.isActive(),
-                category.getName()
-        );
+        ProductResponse response = mapToResponse(saved);
+
         return ApiResponse.<ProductResponse>builder()
                 .data(response)
                 .message(ApiMessages.Success.PRODUCT_CREATED)
@@ -74,19 +70,12 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @PreAuthorize("hasAuthority('" + PermissionNames.VIEW_PRODUCT + "')")
     public ApiResponse<PageResponse<ProductResponse>> getAll(Pageable pageable) {
+
         Page<Product> page = productRepository.findAll(pageable);
         List<ProductResponse> responses = new ArrayList<>();
 
         for(Product product : page.getContent()) {
-            ProductResponse productResponses = new ProductResponse(
-                    product.getId(),
-                    product.getName(),
-                    product.getDescription(),
-                    product.getPrice(),
-                    product.getSku(),
-                    product.isActive(),
-                    product.getCategory().getName()
-            );
+            ProductResponse productResponses = mapToResponse(product);
             responses.add(productResponses);
         }
         PageResponse<ProductResponse> pageResponse = PageResponse.<ProductResponse>builder()
@@ -122,15 +111,7 @@ public class ProductServiceImpl implements ProductService {
         product.setCategory(category);
         Product saved = productRepository.save(product);
 
-        ProductResponse response = new ProductResponse(
-                saved.getId(),
-                saved.getName(),
-                saved.getDescription(),
-                saved.getPrice(),
-                saved.getSku(),
-                saved.isActive(),
-                category.getName()
-        );
+        ProductResponse response = mapToResponse(saved);
         return ApiResponse.<ProductResponse>builder()
                 .data(response)
                 .message(ApiMessages.Success.PRODUCT_UPDATED)
@@ -147,5 +128,17 @@ public class ProductServiceImpl implements ProductService {
         return ApiResponse.<Void>builder()
                 .message(ApiMessages.Success.PRODUCT_DELETED)
                 .build();
+    }
+
+    private ProductResponse mapToResponse(Product product) {
+        return new ProductResponse(
+                product.getId(),
+                product.getName(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getSku(),
+                product.isActive(),
+                product.getCategory().getName()
+        );
     }
 }
