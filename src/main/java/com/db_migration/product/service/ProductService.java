@@ -14,4 +14,5 @@ public interface ProductService {
     ApiResponse<ProductResponse> create(ProductCreateRequest productCreateRequest);
     ApiResponse<PageResponse<ProductResponse>> getAll(Pageable pageable);
     ApiResponse<ProductResponse> update(ProductUpdateRequest productUpdateRequest, Long id);
+    ApiResponse<Void> delete(Long id);
 }

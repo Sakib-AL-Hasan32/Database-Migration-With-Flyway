@@ -130,4 +130,16 @@ public class ProductServiceImpl implements ProductService {
                 .message(ApiMessages.Success.PRODUCT_UPDATED)
                 .build();
     }
+
+    @Override
+    @PreAuthorize("hasAuthority('" + PermissionNames.DELETE_PRODUCT + "')")
+    public ApiResponse<Void> delete(Long id) {
+        if(!productRepository.existsById(id)) {
+            throw new ResourceNotFound(ApiMessages.Error.PRODUCT_NOT_FOUND);
+        }
+        productRepository.deleteById(id);
+        return ApiResponse.<Void>builder()
+                .message(ApiMessages.Success.PRODUCT_DELETED)
+                .build();
+    }
 }

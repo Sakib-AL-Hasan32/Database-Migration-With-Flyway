@@ -37,4 +37,9 @@ public class ProductController {
     public ResponseEntity<ApiResponse<ProductResponse>> update(@Valid @RequestBody ProductUpdateRequest productUpdateRequest, @PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.update(productUpdateRequest, id));
     }
+
+    @DeleteMapping(ApiEndpoints.Product.DELETE)
+    public ResponseEntity<ApiResponse<Void>>  delete(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.delete(id));
+    }
 }
