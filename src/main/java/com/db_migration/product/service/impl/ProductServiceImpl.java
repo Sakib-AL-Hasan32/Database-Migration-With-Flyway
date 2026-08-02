@@ -7,6 +7,7 @@ import com.db_migration.common.exception.ResourceNotFound;
 import com.db_migration.common.response.ApiResponse;
 import com.db_migration.common.response.PageResponse;
 import com.db_migration.product.dto.request.ProductCreateRequest;
+import com.db_migration.product.dto.request.ProductUpdateRequest;
 import com.db_migration.product.dto.response.ProductResponse;
 import com.db_migration.product.entity.Category;
 import com.db_migration.product.entity.Product;
@@ -94,6 +95,39 @@ public class ProductServiceImpl implements ProductService {
         return ApiResponse.<PageResponse<ProductResponse>>builder()
                 .data(pageResponse)
                 .message(ApiMessages.Success.PRODUCT_FETCHED)
+                .build();
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('" + PermissionNames.UPDATE_PRODUCT + "')")
+    public ApiResponse<ProductResponse> update(ProductUpdateRequest productUpdateRequest, Long id) {
+
+        Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.PRODUCT_NOT_FOUND));
+
+        Category category = categoryRepository.findById(productUpdateRequest.categoryId()).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.CATEGORY_NOT_FOUND));
+
+        product.setName(productUpdateRequest.name());
+        product.setDescription(productUpdateRequest.description());
+        product.setPrice(productUpdateRequest.price());
+        product.setStockQuantity(productUpdateRequest.stockQuantity());
+        product.setSku(productUpdateRequest.sku());
+        product.setActive(productUpdateRequest.active());
+        product.setCategory(category);
+        Product saved = productRepository.save(product);
+
+        ProductResponse response = new ProductResponse(
+                saved.getId(),
+                saved.getName(),
+                saved.getDescription(),
+                saved.getPrice(),
+                saved.getStockQuantity(),
+                saved.getSku(),
+                saved.isActive(),
+                category.getName()
+        );
+        return ApiResponse.<ProductResponse>builder()
+                .data(response)
+                .message(ApiMessages.Success.PRODUCT_UPDATED)
                 .build();
     }
 }

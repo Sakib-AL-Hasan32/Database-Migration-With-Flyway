@@ -4,6 +4,7 @@ import com.db_migration.common.constants.ApiEndpoints;
 import com.db_migration.common.response.ApiResponse;
 import com.db_migration.common.response.PageResponse;
 import com.db_migration.product.dto.request.ProductCreateRequest;
+import com.db_migration.product.dto.request.ProductUpdateRequest;
 import com.db_migration.product.dto.response.ProductResponse;
 import com.db_migration.product.service.ProductService;
 import jakarta.validation.Valid;
@@ -30,5 +31,10 @@ public class ProductController {
     @GetMapping(ApiEndpoints.Product.GET_ALL)
     public ResponseEntity<ApiResponse<PageResponse<ProductResponse>>> getAll(@PageableDefault(size = 5, sort = "id") Pageable pageable) {
         return ResponseEntity.status(HttpStatus.OK).body(productService.getAll(pageable));
+    }
+
+    @PutMapping(ApiEndpoints.Product.UPDATE)
+    public ResponseEntity<ApiResponse<ProductResponse>> update(@Valid @RequestBody ProductUpdateRequest productUpdateRequest, @PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.update(productUpdateRequest, id));
     }
 }
