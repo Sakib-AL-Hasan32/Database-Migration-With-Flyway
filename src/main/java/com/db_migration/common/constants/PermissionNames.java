@@ -25,6 +25,10 @@ public final class PermissionNames {
     public static final String DELETE_ORDER = "DELETE_ORDER";
     public static final String VIEW_ORDER = "VIEW_ORDER";
 
-    public static final String MANAGE_INVENTORY = "MANAGE_INVENTORY";
     public static final String VIEW_INVENTORY = "VIEW_INVENTORY";
+    public static final String INCREASE_INVENTORY = "INCREASE_INVENTORY";
+    public static final String DECREASE_INVENTORY = "DECREASE_INVENTORY";
+    public static final String RESERVE_INVENTORY = "RESERVE_INVENTORY";
+    public static final String RELEASE_INVENTORY = "RELEASE_INVENTORY";
+    public static final String ADJUST_INVENTORY = "ADJUST_INVENTORY";
 }

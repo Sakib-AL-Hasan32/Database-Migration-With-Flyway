@@ -29,4 +29,10 @@ public final class ApiEndpoints {
         public static final String DELETE = "/delete/{id}";
     }
 
+    public static final class Inventory{
+        public static final String BASE = VERSION + "/inventory";
+        public static final String INCREASE = "/increase";
+        public static final String DECREASE = "/decrease";
+    }
+
 }

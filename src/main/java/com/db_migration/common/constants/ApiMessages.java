@@ -17,6 +17,7 @@ public final class ApiMessages {
         public static final String PRODUCT_FETCHED = "Product fetched!";
         public static final String PRODUCT_UPDATED = "Product updated!";
         public static final String PRODUCT_DELETED = "Product deleted!";
+        public static final String INVENTORY_INCREASED = "Inventory increased";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -29,5 +30,8 @@ public final class ApiMessages {
         public static final String CATEGORY_NOT_FOUND = "Category not found";
         public static final String PRODUCT_ALREADY_EXISTS = "Product already exists";
         public static final String PRODUCT_NOT_FOUND = "Product not found";
+        public static final String INVENTORY_ALREADY_EXISTS = "Inventory already exists";
+        public static final String INVENTORY_NOT_FOUND = "Inventory not found";
+
     }
 }

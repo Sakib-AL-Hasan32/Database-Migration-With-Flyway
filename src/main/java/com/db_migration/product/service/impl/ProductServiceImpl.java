@@ -6,6 +6,8 @@ import com.db_migration.common.exception.ResourceAlreadyExistsException;
 import com.db_migration.common.exception.ResourceNotFound;
 import com.db_migration.common.response.ApiResponse;
 import com.db_migration.common.response.PageResponse;
+import com.db_migration.inventory.entity.Inventory;
+import com.db_migration.inventory.repository.InventoryRepository;
 import com.db_migration.product.dto.request.ProductCreateRequest;
 import com.db_migration.product.dto.request.ProductUpdateRequest;
 import com.db_migration.product.dto.response.ProductResponse;
@@ -28,6 +30,7 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final InventoryRepository inventoryRepository;
 
     @Override
     @PreAuthorize("hasAuthority('" + PermissionNames.CREATE_PRODUCT + "')")
@@ -40,18 +43,24 @@ public class ProductServiceImpl implements ProductService {
                 .name(productCreateRequest.name())
                 .description(productCreateRequest.description())
                 .price(productCreateRequest.price())
-                .stockQuantity(productCreateRequest.stockQuantity())
                 .sku(productCreateRequest.sku())
                 .active(productCreateRequest.active())
                 .category(category)
                 .build();
         Product saved = productRepository.save(product);
+
+        Inventory inventory = Inventory.builder()
+                .product(saved)
+                .totalQuantity(0)
+                .reservedQuantity(0)
+                .build();
+        inventoryRepository.save(inventory);
+
         ProductResponse response = new ProductResponse(
                 saved.getId(),
                 saved.getName(),
                 saved.getDescription(),
                 saved.getPrice(),
-                saved.getStockQuantity(),
                 saved.getSku(),
                 saved.isActive(),
                 category.getName()
@@ -74,7 +83,6 @@ public class ProductServiceImpl implements ProductService {
                     product.getName(),
                     product.getDescription(),
                     product.getPrice(),
-                    product.getStockQuantity(),
                     product.getSku(),
                     product.isActive(),
                     product.getCategory().getName()
@@ -109,7 +117,6 @@ public class ProductServiceImpl implements ProductService {
         product.setName(productUpdateRequest.name());
         product.setDescription(productUpdateRequest.description());
         product.setPrice(productUpdateRequest.price());
-        product.setStockQuantity(productUpdateRequest.stockQuantity());
         product.setSku(productUpdateRequest.sku());
         product.setActive(productUpdateRequest.active());
         product.setCategory(category);
@@ -120,7 +127,6 @@ public class ProductServiceImpl implements ProductService {
                 saved.getName(),
                 saved.getDescription(),
                 saved.getPrice(),
-                saved.getStockQuantity(),
                 saved.getSku(),
                 saved.isActive(),
                 category.getName()

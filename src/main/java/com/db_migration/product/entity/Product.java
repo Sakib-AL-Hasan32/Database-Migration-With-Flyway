@@ -28,9 +28,6 @@ public class Product extends AuditableEntity {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
 
-    @Column(nullable = false)
-    private Integer stockQuantity;
-
     @Column(nullable = false, unique = true, length = 50)
     private String sku;
 

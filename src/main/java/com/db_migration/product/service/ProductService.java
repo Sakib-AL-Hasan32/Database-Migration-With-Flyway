@@ -6,7 +6,6 @@ import com.db_migration.product.dto.request.ProductCreateRequest;
 import com.db_migration.product.dto.request.ProductUpdateRequest;
 import com.db_migration.product.dto.response.ProductResponse;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 

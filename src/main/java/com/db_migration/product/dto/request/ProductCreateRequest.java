@@ -16,10 +16,6 @@ public record ProductCreateRequest (
         @DecimalMin(value = "0.01", message = "Price must be greater than 0.")
         BigDecimal price,
 
-        @NotNull(message = "Stock quantity is required.")
-        @Min(value = 0, message = "Stock quantity cannot be negative.")
-        Integer stockQuantity,
-
         @NotBlank(message = "SKU is required.")
         @Size(max = 50, message = "SKU cannot exceed 50 characters.")
         String sku,
