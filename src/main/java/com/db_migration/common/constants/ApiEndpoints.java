@@ -39,4 +39,10 @@ public final class ApiEndpoints {
         public static final String ADJUST = "/adjust";
     }
 
+    public static final class Cart{
+        public static final String BASE = VERSION + "/cart";
+        public static final String ADD_ITEM = "/addItem";
+        public static final String REMOVE_ITEM = "/removeItem";
+    }
+
 }

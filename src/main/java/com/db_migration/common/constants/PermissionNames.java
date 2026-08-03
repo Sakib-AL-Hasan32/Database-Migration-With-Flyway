@@ -20,6 +20,12 @@ public final class PermissionNames {
     public static final String DELETE_CART = "DELETE_CART";
     public static final String VIEW_CART = "VIEW_CART";
 
+    public static final String CREATE_CART_ITEM = "CREATE_CART_ITEM";
+    public static final String UPDATE_CART_ITEM = "UPDATE_CART_ITEM";
+    public static final String VIEW_CART_ITEM = "VIEW_CART_ITEM";
+    public static final String DELETE_CART_ITEM = "DELETE_CART_ITEM";
+    public static final String ADD_ITEM_TO_CART = "ADD_ITEM_TO_CART";
+
     public static final String CREATE_ORDER = "CREATE_ORDER";
     public static final String UPDATE_ORDER = "UPDATE_ORDER";
     public static final String DELETE_ORDER = "DELETE_ORDER";

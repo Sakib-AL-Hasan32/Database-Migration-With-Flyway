@@ -23,6 +23,8 @@ public final class ApiMessages {
         public static final String INVENTORY_RELEASED = "Inventory released";
         public static final String INVENTORY_FETCHED = "Inventory fetched";
         public static final String INVENTORY_ADJUSTED = "Inventory adjusted";
+        public static final String ITEM_ADDED = "Item added";
+        public static final String ITEM_DELETED = "Item deleted";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -35,11 +37,12 @@ public final class ApiMessages {
         public static final String CATEGORY_NOT_FOUND = "Category not found";
         public static final String PRODUCT_ALREADY_EXISTS = "Product already exists";
         public static final String PRODUCT_NOT_FOUND = "Product not found";
-        public static final String INVENTORY_ALREADY_EXISTS = "Inventory already exists";
         public static final String INVENTORY_NOT_FOUND = "Inventory not found";
         public static final String INVENTORY_DECREASED_FAILED = "Inventory decreased failed";
         public static final String INVENTORY_RESERVED_FAILED = "Inventory reserved failed";
         public static final String INVENTORY_RELEASED_FAILED = "Inventory released failed";
+        public static final String PRODUCT_NOT_ACTIVATED = "Product not activated";
+        public static final String INSUFFICIENT_QUANTITY = "Insufficient quantity";
 
     }
 }
