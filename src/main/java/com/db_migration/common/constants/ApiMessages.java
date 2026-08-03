@@ -18,6 +18,9 @@ public final class ApiMessages {
         public static final String PRODUCT_UPDATED = "Product updated!";
         public static final String PRODUCT_DELETED = "Product deleted!";
         public static final String INVENTORY_INCREASED = "Inventory increased";
+        public static final String  INVENTORY_DECREASED = "Inventory decreased";
+        public static final String INVENTORY_RESERVED = "Inventory reserved";
+        public static final String INVENTORY_RELEASED = "Inventory released";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -33,6 +36,8 @@ public final class ApiMessages {
         public static final String INVENTORY_ALREADY_EXISTS = "Inventory already exists";
         public static final String INVENTORY_NOT_FOUND = "Inventory not found";
         public static final String INVENTORY_DECREASED_FAILED = "Inventory decreased failed";
+        public static final String INVENTORY_RESERVED_FAILED = "Inventory reserved failed";
+        public static final String INVENTORY_RELEASED_FAILED = "Inventory released failed";
 
     }
 }

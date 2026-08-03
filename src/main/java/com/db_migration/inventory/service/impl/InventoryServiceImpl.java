@@ -22,6 +22,7 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     @PreAuthorize("hasAuthority('" + PermissionNames.INCREASE_INVENTORY + "')")
     public ApiResponse<InventoryResponse> increase(InventoryQuantityRequest inventoryQuantityRequest) {
+
         Inventory inventory = inventoryRepository.findByProductId(inventoryQuantityRequest.productId()).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.INVENTORY_NOT_FOUND));
 
         inventory.setTotalQuantity(inventory.getTotalQuantity() + inventoryQuantityRequest.quantity());
@@ -37,6 +38,7 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     @PreAuthorize("hasAuthority('" + PermissionNames.DECREASE_INVENTORY + "')")
     public ApiResponse<InventoryResponse> decrease(InventoryQuantityRequest inventoryQuantityRequest) {
+
         Inventory inventory = inventoryRepository.findByProductId(inventoryQuantityRequest.productId()).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.INVENTORY_NOT_FOUND));
 
         int newTotalQuantity = inventory.getTotalQuantity() - inventoryQuantityRequest.quantity();
@@ -51,7 +53,47 @@ public class InventoryServiceImpl implements InventoryService {
         InventoryResponse response = mapToResponse(saved);
         return ApiResponse.<InventoryResponse>builder()
                 .data(response)
-                .message(ApiMessages.Success.INVENTORY_INCREASED)
+                .message(ApiMessages.Success.INVENTORY_DECREASED)
+                .build();
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('" + PermissionNames.RESERVE_INVENTORY + "')")
+    public ApiResponse<InventoryResponse> reserve(InventoryQuantityRequest inventoryQuantityRequest) {
+
+        Inventory inventory = inventoryRepository.findByProductId(inventoryQuantityRequest.productId()).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.INVENTORY_NOT_FOUND));
+
+        if(inventoryQuantityRequest.quantity() > inventory.getAvailableQuantity()) {
+            throw new ResourceConflictException(ApiMessages.Error.INVENTORY_RESERVED_FAILED);
+        }
+
+        inventory.setReservedQuantity(inventory.getReservedQuantity() + inventoryQuantityRequest.quantity());
+        Inventory saved = inventoryRepository.save(inventory);
+
+        InventoryResponse response = mapToResponse(saved);
+        return ApiResponse.<InventoryResponse>builder()
+                .data(response)
+                .message(ApiMessages.Success.INVENTORY_RESERVED)
+                .build();
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('" + PermissionNames.RELEASE_INVENTORY + "')")
+    public ApiResponse<InventoryResponse> release(InventoryQuantityRequest inventoryQuantityRequest) {
+
+        Inventory inventory = inventoryRepository.findByProductId(inventoryQuantityRequest.productId()).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.INVENTORY_NOT_FOUND));
+
+        if(inventoryQuantityRequest.quantity() > inventory.getReservedQuantity()) {
+            throw new ResourceConflictException(ApiMessages.Error.INVENTORY_RELEASED_FAILED);
+        }
+
+        inventory.setReservedQuantity(inventory.getReservedQuantity() - inventoryQuantityRequest.quantity());
+        Inventory saved = inventoryRepository.save(inventory);
+        InventoryResponse response = mapToResponse(saved);
+
+        return ApiResponse.<InventoryResponse>builder()
+                .data(response)
+                .message(ApiMessages.Success.INVENTORY_RELEASED)
                 .build();
     }
 

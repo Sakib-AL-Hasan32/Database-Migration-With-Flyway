@@ -29,4 +29,14 @@ public class InventoryController {
     public ResponseEntity<ApiResponse<InventoryResponse>> decrease(@Valid @RequestBody InventoryQuantityRequest inventoryQuantityRequest) {
         return ResponseEntity.status(HttpStatus.OK).body(inventoryService.decrease(inventoryQuantityRequest));
     }
+
+    @PostMapping(ApiEndpoints.Inventory.RESERVE)
+    public ResponseEntity<ApiResponse<InventoryResponse>> reserve(@Valid @RequestBody InventoryQuantityRequest inventoryQuantityRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(inventoryService.reserve(inventoryQuantityRequest));
+    }
+
+    @PostMapping(ApiEndpoints.Inventory.RELEASE)
+    public ResponseEntity<ApiResponse<InventoryResponse>> release(@Valid @RequestBody InventoryQuantityRequest inventoryQuantityRequest) {
+        return ResponseEntity.status(HttpStatus.OK).body(inventoryService.release(inventoryQuantityRequest));
+    }
 }
