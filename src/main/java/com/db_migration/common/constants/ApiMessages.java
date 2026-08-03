@@ -32,6 +32,7 @@ public final class ApiMessages {
         public static final String PRODUCT_NOT_FOUND = "Product not found";
         public static final String INVENTORY_ALREADY_EXISTS = "Inventory already exists";
         public static final String INVENTORY_NOT_FOUND = "Inventory not found";
+        public static final String INVENTORY_DECREASED_FAILED = "Inventory decreased failed";
 
     }
 }

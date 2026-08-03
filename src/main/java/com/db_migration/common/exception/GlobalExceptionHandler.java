@@ -42,6 +42,15 @@ public class GlobalExceptionHandler {
         return problemDetail(HttpStatus.FORBIDDEN, "Access Denied", exception.getMessage());
     }
 
+    @ExceptionHandler(ResourceConflictException.class)
+    public ProblemDetail handleResourceConflictException(ResourceConflictException exception) {
+        return problemDetail(
+                HttpStatus.CONFLICT,
+                "Resource conflict",
+                exception.getMessage()
+        );
+    }
+
     private ProblemDetail problemDetail(HttpStatus status, String title, String detail) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, detail);
         problemDetail.setTitle(title);

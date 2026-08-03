@@ -2,6 +2,7 @@ package com.db_migration.inventory.service.impl;
 
 import com.db_migration.common.constants.ApiMessages;
 import com.db_migration.common.constants.PermissionNames;
+import com.db_migration.common.exception.ResourceConflictException;
 import com.db_migration.common.exception.ResourceNotFound;
 import com.db_migration.common.response.ApiResponse;
 import com.db_migration.inventory.dto.request.InventoryQuantityRequest;
@@ -38,7 +39,13 @@ public class InventoryServiceImpl implements InventoryService {
     public ApiResponse<InventoryResponse> decrease(InventoryQuantityRequest inventoryQuantityRequest) {
         Inventory inventory = inventoryRepository.findByProductId(inventoryQuantityRequest.productId()).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.INVENTORY_NOT_FOUND));
 
-        inventory.setTotalQuantity(inventory.getTotalQuantity() - inventoryQuantityRequest.quantity());
+        int newTotalQuantity = inventory.getTotalQuantity() - inventoryQuantityRequest.quantity();
+
+        if (newTotalQuantity < inventory.getReservedQuantity()) {
+            throw new ResourceConflictException(ApiMessages.Error.INVENTORY_DECREASED_FAILED);
+        }
+
+        inventory.setTotalQuantity(newTotalQuantity);
         Inventory saved = inventoryRepository.save(inventory);
 
         InventoryResponse response = mapToResponse(saved);
