@@ -35,6 +35,8 @@ public final class ApiEndpoints {
         public static final String DECREASE = "/decrease";
         public static final String RESERVE = "/reserve";
         public static final String RELEASE = "/release";
+        public static final String GET_ALL = "/getAll";
+        public static final String ADJUST = "/adjust";
     }
 
 }

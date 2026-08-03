@@ -5,14 +5,21 @@ import com.db_migration.common.constants.PermissionNames;
 import com.db_migration.common.exception.ResourceConflictException;
 import com.db_migration.common.exception.ResourceNotFound;
 import com.db_migration.common.response.ApiResponse;
+import com.db_migration.common.response.PageResponse;
+import com.db_migration.inventory.dto.request.InventoryAdjustRequest;
 import com.db_migration.inventory.dto.request.InventoryQuantityRequest;
 import com.db_migration.inventory.dto.response.InventoryResponse;
 import com.db_migration.inventory.entity.Inventory;
 import com.db_migration.inventory.repository.InventoryRepository;
 import com.db_migration.inventory.service.InventoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -94,6 +101,50 @@ public class InventoryServiceImpl implements InventoryService {
         return ApiResponse.<InventoryResponse>builder()
                 .data(response)
                 .message(ApiMessages.Success.INVENTORY_RELEASED)
+                .build();
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('" + PermissionNames.VIEW_INVENTORY + "')")
+    public ApiResponse<PageResponse<InventoryResponse>> getAll(Pageable pageable) {
+        Page<Inventory> page = inventoryRepository.findAll(pageable);
+        List<InventoryResponse> responses = new ArrayList<>();
+
+        for(Inventory inventory : page.getContent()) {
+            InventoryResponse response = mapToResponse(inventory);
+            responses.add(response);
+        }
+
+        PageResponse<InventoryResponse> pageResponse = PageResponse.<InventoryResponse>builder()
+                .content(responses)
+                .page(page.getTotalPages())
+                .size(page.getSize())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
+                .first(page.isFirst())
+                .last(page.isLast())
+                .prev(page.hasPrevious())
+                .next(page.hasNext())
+                .build();
+        return ApiResponse.<PageResponse<InventoryResponse>>builder()
+                .data(pageResponse)
+                .message(ApiMessages.Success.INVENTORY_FETCHED)
+                .build();
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('" + PermissionNames.ADJUST_INVENTORY + "')")
+    public ApiResponse<InventoryResponse> adjust(InventoryAdjustRequest inventoryAdjustRequest) {
+
+        Inventory inventory = inventoryRepository.findByProductId(inventoryAdjustRequest.productId()).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.INVENTORY_NOT_FOUND));
+
+        inventory.setTotalQuantity(inventoryAdjustRequest.quantity());
+        Inventory saved = inventoryRepository.save(inventory);
+        InventoryResponse response = mapToResponse(saved);
+
+        return ApiResponse.<InventoryResponse>builder()
+                .data(response)
+                .message(ApiMessages.Success.INVENTORY_ADJUSTED)
                 .build();
     }
 

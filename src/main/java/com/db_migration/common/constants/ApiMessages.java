@@ -21,6 +21,8 @@ public final class ApiMessages {
         public static final String  INVENTORY_DECREASED = "Inventory decreased";
         public static final String INVENTORY_RESERVED = "Inventory reserved";
         public static final String INVENTORY_RELEASED = "Inventory released";
+        public static final String INVENTORY_FETCHED = "Inventory fetched";
+        public static final String INVENTORY_ADJUSTED = "Inventory adjusted";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)

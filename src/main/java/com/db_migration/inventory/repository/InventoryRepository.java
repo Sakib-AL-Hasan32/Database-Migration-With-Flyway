@@ -1,6 +1,8 @@
 package com.db_migration.inventory.repository;
 
 import com.db_migration.inventory.entity.Inventory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,5 +12,5 @@ import java.util.Optional;
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     Optional<Inventory> findByProductId(Long productId);
     boolean existsByProductId(Long productId);
-
+    Page<Inventory> findAll (Pageable pageable);
 }
