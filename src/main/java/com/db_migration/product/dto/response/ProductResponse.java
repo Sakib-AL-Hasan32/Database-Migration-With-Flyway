@@ -7,6 +7,7 @@ public record ProductResponse(
         String name,
         String description,
         BigDecimal price,
+        Integer quantity,
         String sku,
         boolean active,
         String categoryName

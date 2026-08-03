@@ -23,7 +23,22 @@ public class InventoryServiceImpl implements InventoryService {
     public ApiResponse<InventoryResponse> increase(InventoryQuantityRequest inventoryQuantityRequest) {
         Inventory inventory = inventoryRepository.findByProductId(inventoryQuantityRequest.productId()).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.INVENTORY_NOT_FOUND));
 
-        inventory.setTotalQuantity(inventoryQuantityRequest.quantity());
+        inventory.setTotalQuantity(inventory.getTotalQuantity() + inventoryQuantityRequest.quantity());
+        Inventory saved = inventoryRepository.save(inventory);
+
+        InventoryResponse response = mapToResponse(saved);
+        return ApiResponse.<InventoryResponse>builder()
+                .data(response)
+                .message(ApiMessages.Success.INVENTORY_INCREASED)
+                .build();
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('" + PermissionNames.DECREASE_INVENTORY + "')")
+    public ApiResponse<InventoryResponse> decrease(InventoryQuantityRequest inventoryQuantityRequest) {
+        Inventory inventory = inventoryRepository.findByProductId(inventoryQuantityRequest.productId()).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.INVENTORY_NOT_FOUND));
+
+        inventory.setTotalQuantity(inventory.getTotalQuantity() - inventoryQuantityRequest.quantity());
         Inventory saved = inventoryRepository.save(inventory);
 
         InventoryResponse response = mapToResponse(saved);

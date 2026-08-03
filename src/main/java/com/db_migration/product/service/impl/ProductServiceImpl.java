@@ -131,11 +131,14 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private ProductResponse mapToResponse(Product product) {
+        Inventory inventory = inventoryRepository.findByProductId(product.getId()).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.INVENTORY_NOT_FOUND));
+
         return new ProductResponse(
                 product.getId(),
                 product.getName(),
                 product.getDescription(),
                 product.getPrice(),
+                inventory.getTotalQuantity(),
                 product.getSku(),
                 product.isActive(),
                 product.getCategory().getName()
