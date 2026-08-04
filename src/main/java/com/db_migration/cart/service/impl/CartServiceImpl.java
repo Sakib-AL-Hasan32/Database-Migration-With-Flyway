@@ -19,7 +19,6 @@ import com.db_migration.inventory.repository.InventoryRepository;
 import com.db_migration.product.entity.Product;
 import com.db_migration.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -82,6 +81,36 @@ public class CartServiceImpl implements CartService {
             cartItemRepository.save(newCartItem);
         }
 
+        CartResponse response = mapToResponse(cart);
+
+        return ApiResponse.<CartResponse>builder()
+                .data(response)
+                .message(ApiMessages.Success.ITEM_ADDED)
+                .build();
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('" + PermissionNames.REMOVE_ITEM_FROM_CART + "')")
+    public ApiResponse<CartResponse> removeItem(UserDetails userDetails, Long id) {
+
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.USER_NOT_FOUND));
+
+        Cart cart = cartRepository.findByUser(user).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.CART_NOT_FOUND));
+
+        CartItem cartItem = cartItemRepository.findById(id).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.NOT_FOUND));
+
+        cartItemRepository.delete(cartItem);
+
+        CartResponse response = mapToResponse(cart);
+
+        return ApiResponse.<CartResponse>builder()
+                .data(response)
+                .message(ApiMessages.Success.ITEM_DELETED)
+                .build();
+    }
+
+    private CartResponse mapToResponse(Cart  cart) {
+
         BigDecimal totalPrice = BigDecimal.ZERO;
         List<CartItemResponse>  cartItemResponseList = new ArrayList<>();
         List<CartItem> cartItems = cartItemRepository.findByCart(cart);
@@ -100,19 +129,13 @@ public class CartServiceImpl implements CartService {
                     item.getQuantity(),
                     subTotal
             );
-
             cartItemResponseList.add(cartItemResponse);
         }
 
-        CartResponse response = new CartResponse(
+        return new CartResponse(
                 cart.getId(),
                 cartItemResponseList,
                 totalPrice
         );
-
-        return ApiResponse.<CartResponse>builder()
-                .data(response)
-                .message(ApiMessages.Success.ITEM_ADDED)
-                .build();
     }
 }

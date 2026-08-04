@@ -11,10 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,4 +23,14 @@ public class CartController {
     public ResponseEntity<ApiResponse<CartResponse>> addItem(@AuthenticationPrincipal UserDetails userDetails, @Valid @RequestBody CartItemCreateRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(cartService.addItem(request, userDetails));
     }
+
+    @DeleteMapping(ApiEndpoints.Cart.REMOVE_ITEM)
+    public ResponseEntity<ApiResponse<CartResponse>> removeItem(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(cartService.removeItem(userDetails, id));
+    }
+
+
+
+
+
 }

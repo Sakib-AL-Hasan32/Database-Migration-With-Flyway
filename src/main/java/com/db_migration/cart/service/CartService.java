@@ -7,4 +7,5 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public interface CartService {
     ApiResponse<CartResponse> addItem(CartItemCreateRequest request, UserDetails userDetails);
+    ApiResponse<CartResponse> removeItem(UserDetails userDetails, Long id);
 }

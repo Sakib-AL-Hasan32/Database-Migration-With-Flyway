@@ -29,6 +29,7 @@ public final class ApiMessages {
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class Error {
+        public static final String NOT_FOUND = "Not found!";
         public static final String USER_NOT_FOUND = "User not found";
         public static final String USER_ALREADY_EXISTS = "User already exists";
         public static final String EMAIL_ALREADY_EXISTS = "Email already exists";
@@ -43,6 +44,7 @@ public final class ApiMessages {
         public static final String INVENTORY_RELEASED_FAILED = "Inventory released failed";
         public static final String PRODUCT_NOT_ACTIVATED = "Product not activated";
         public static final String INSUFFICIENT_QUANTITY = "Insufficient quantity";
+        public static final String CART_NOT_FOUND = "Cart not found";
 
     }
 }
