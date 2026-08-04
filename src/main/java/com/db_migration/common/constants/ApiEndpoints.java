@@ -52,6 +52,8 @@ public final class ApiEndpoints {
     public static final class Order{
         public static final String BASE = VERSION + "/order";
         public static final String PLACE_ORDER = "/placeOrder";
+        public static final String CANCEL_ORDER = "/cancelOrder/{orderId}";
+        public static final String GET_ALL = "/getAll";
     }
 
 }

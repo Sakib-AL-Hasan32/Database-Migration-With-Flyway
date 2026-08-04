@@ -25,6 +25,7 @@ import com.db_migration.product.entity.Product;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -95,8 +96,6 @@ public class OrderServiceImpl implements OrderService {
                 .build();
         orderRepository.save(order);
 
-        List<OrderItemResponse> orderItemResponseList = new ArrayList<>();
-
         // OrderItem Object Created
         // OrderItemResponse Created
         // Inventory Updated
@@ -112,28 +111,96 @@ public class OrderServiceImpl implements OrderService {
 
             Inventory inventory = inventoryRepository.findByProductId(cartItem.getProduct().getId()).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.INVENTORY_NOT_FOUND));
 
-            inventory.setTotalQuantity(inventory.getTotalQuantity() - cartItem.getQuantity());
+            inventory.setReservedQuantity(inventory.getReservedQuantity() + cartItem.getQuantity());
 
             inventoryRepository.save(inventory);
+        }
 
-            BigDecimal subTotal = product.getPrice()
-                    .multiply(BigDecimal.valueOf(cartItem.getQuantity()));
+        // Clear CartItems [Not the cart]
+        cartItemRepository.deleteAll(cartItems);
+
+        OrderResponse response = mapToResponse(order);
+
+        return ApiResponse.<OrderResponse>builder()
+                .data(response)
+                .message(ApiMessages.Success.ORDER_CONFIRMED)
+                .build();
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('" + PermissionNames.CANCEL_ORDER + "')")
+    public ApiResponse<Void> cancelOrder(UserDetails userDetails, Long orderId) {
+        User user = userRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException(ApiMessages.Error.USER_NOT_FOUND));
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.ORDER_NOT_FOUND));
+
+        if (!order.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException(ApiMessages.Error.ACCESS_DENIED);
+        }
+
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new IllegalArgumentException(ApiMessages.Error.ORDER_CANNOT_BE_CANCELLED);
+        }
+
+        List<OrderItem> orderItems = orderItemRepository.findByOrder(order);
+
+        for (OrderItem orderItem : orderItems) {
+            Inventory inventory = inventoryRepository.findByProductId(orderItem.getProduct().getId()).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.INVENTORY_NOT_FOUND));
+
+            inventory.setReservedQuantity(inventory.getReservedQuantity() - orderItem.getQuantity());
+            inventoryRepository.save(inventory);
+        }
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+
+        return ApiResponse.<Void>builder()
+                .message(ApiMessages.Success.ORDER_CANCELLED)
+                .build();
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('" + PermissionNames.VIEW_ORDER + "')")
+    public ApiResponse<List<OrderResponse>> getAll(UserDetails userDetails) {
+
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new UsernameNotFoundException(ApiMessages.Error.USER_NOT_FOUND));
+
+        List<Order> orders = orderRepository.findByUser(user);
+
+
+        List<OrderResponse> orderResponseList = new ArrayList<>();
+        for(Order order : orders) {
+            OrderResponse orderResponse = mapToResponse(order);
+            orderResponseList.add(orderResponse);
+        }
+
+        return ApiResponse.<List<OrderResponse>>builder()
+                .data(orderResponseList)
+                .message(ApiMessages.Success.ORDER_FETCHED)
+                .build();
+    }
+
+    private OrderResponse mapToResponse(Order order) {
+        List<OrderItem> orderItems = orderItemRepository.findByOrder(order);
+        List<OrderItemResponse> orderItemResponseList = new ArrayList<>();
+        for (OrderItem orderItem : orderItems) {
+            BigDecimal subTotal = orderItem.getProduct()
+                    .getPrice()
+                    .multiply(BigDecimal.valueOf(orderItem.getQuantity()));
 
             OrderItemResponse orderItemResponse = new OrderItemResponse(
                     orderItem.getId(),
-                    product.getId(),
-                    product.getName(),
-                    product.getPrice(),
+                    orderItem.getProduct().getId(),
+                    orderItem.getProduct().getName(),
+                    orderItem.getProduct().getPrice(),
                     orderItem.getQuantity(),
                     subTotal
             );
             orderItemResponseList.add(orderItemResponse);
         }
 
-        // Clear CartItems [Not the cart]
-        cartItemRepository.deleteAll(cartItems);
-
-        OrderResponse response = new OrderResponse(
+        return new OrderResponse(
                 order.getId(),
                 order.getOrderNumber(),
                 order.getStatus(),
@@ -143,11 +210,6 @@ public class OrderServiceImpl implements OrderService {
                 orderItemResponseList,
                 order.getCreatedAt()
         );
-
-        return ApiResponse.<OrderResponse>builder()
-                .data(response)
-                .message(ApiMessages.Success.ORDER_CONFIRMED)
-                .build();
     }
 
     private String generateOrderNumber() {

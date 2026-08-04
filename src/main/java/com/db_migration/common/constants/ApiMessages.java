@@ -29,6 +29,8 @@ public final class ApiMessages {
         public static final String CART_UPDATED = "Cart updated";
         public static final String CART_DELETED = "Cart deleted";
         public static final String ORDER_CONFIRMED = "Order confirmed";
+        public static final String ORDER_CANCELLED = "Order cancelled";
+        public static final String ORDER_FETCHED = "Order fetched";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -50,5 +52,8 @@ public final class ApiMessages {
         public static final String INSUFFICIENT_QUANTITY = "Insufficient quantity";
         public static final String CART_NOT_FOUND = "Cart not found";
         public static final String CART_EMPTY = "Cart empty";
+        public static final String ORDER_NOT_FOUND = "Order not found";
+        public static final String ACCESS_DENIED = "Access denied";
+        public static final String ORDER_CANNOT_BE_CANCELLED = "Order cannot be cancelled";
     }
 }

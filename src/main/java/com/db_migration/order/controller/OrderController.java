@@ -11,10 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,5 +24,15 @@ public class OrderController {
     @PostMapping(ApiEndpoints.Order.PLACE_ORDER)
     public ResponseEntity<ApiResponse<OrderResponse>> placeOrder(@AuthenticationPrincipal UserDetails userDetails, @Valid @RequestBody OrderCreateRequest request) {
         return ResponseEntity.status(HttpStatus.OK).body(orderService.placeOrder(userDetails, request));
+    }
+
+    @PatchMapping(ApiEndpoints.Order.CANCEL_ORDER)
+    public ResponseEntity<ApiResponse<Void>> cancelOrder(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long orderId) {
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.cancelOrder(userDetails, orderId));
+    }
+
+    @GetMapping(ApiEndpoints.Order.GET_ALL)
+    public ResponseEntity<ApiResponse<List<OrderResponse>>> getAll(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.status(HttpStatus.OK).body(orderService.getAll(userDetails));
     }
 }
