@@ -49,4 +49,9 @@ public final class ApiEndpoints {
         public static final String CLEAR_CART = "/clearCart";
     }
 
+    public static final class Order{
+        public static final String BASE = VERSION + "/order";
+        public static final String PLACE_ORDER = "/placeOrder";
+    }
+
 }

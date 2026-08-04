@@ -65,6 +65,7 @@ public class CartServiceImpl implements CartService {
 
         Optional<CartItem> cartItem = cartItemRepository.findByCartAndProduct(cart, product);
 
+        // If CartItem Already Exist Then Just Increase The Quantity
         if(cartItem.isPresent()) {
             CartItem existingCartItem = cartItem.get();
             int newQuantity = existingCartItem.getQuantity() + request.quantity();

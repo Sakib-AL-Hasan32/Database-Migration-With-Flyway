@@ -27,9 +27,10 @@ public final class PermissionNames {
     public static final String ADD_ITEM_TO_CART = "ADD_ITEM_TO_CART";
     public static final String REMOVE_ITEM_FROM_CART = "REMOVE_ITEM_FROM_CART";
 
+    public static final String PLACE_ORDER = "PLACE_ORDER";
+    public static final String DELETE_ORDER = "DELETE_ORDER";
     public static final String CREATE_ORDER = "CREATE_ORDER";
     public static final String UPDATE_ORDER = "UPDATE_ORDER";
-    public static final String DELETE_ORDER = "DELETE_ORDER";
     public static final String VIEW_ORDER = "VIEW_ORDER";
 
     public static final String VIEW_INVENTORY = "VIEW_INVENTORY";

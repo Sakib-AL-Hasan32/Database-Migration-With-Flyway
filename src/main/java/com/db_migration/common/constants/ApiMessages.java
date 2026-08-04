@@ -28,6 +28,7 @@ public final class ApiMessages {
         public static final String CART_FETCHED = "Cart fetched";
         public static final String CART_UPDATED = "Cart updated";
         public static final String CART_DELETED = "Cart deleted";
+        public static final String ORDER_CONFIRMED = "Order confirmed";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -48,6 +49,6 @@ public final class ApiMessages {
         public static final String PRODUCT_NOT_ACTIVATED = "Product not activated";
         public static final String INSUFFICIENT_QUANTITY = "Insufficient quantity";
         public static final String CART_NOT_FOUND = "Cart not found";
-
+        public static final String CART_EMPTY = "Cart empty";
     }
 }
