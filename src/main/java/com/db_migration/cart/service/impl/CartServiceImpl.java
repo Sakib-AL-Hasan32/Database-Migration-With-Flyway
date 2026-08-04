@@ -3,6 +3,7 @@ package com.db_migration.cart.service.impl;
 import com.db_migration.auth.entity.User;
 import com.db_migration.auth.repository.UserRepository;
 import com.db_migration.cart.dto.request.CartItemCreateRequest;
+import com.db_migration.cart.dto.request.CartItemUpdateRequest;
 import com.db_migration.cart.dto.response.CartItemResponse;
 import com.db_migration.cart.dto.response.CartResponse;
 import com.db_migration.cart.entity.Cart;
@@ -109,7 +110,77 @@ public class CartServiceImpl implements CartService {
                 .build();
     }
 
-    private CartResponse mapToResponse(Cart  cart) {
+    @Override
+    @PreAuthorize("hasAuthority('" + PermissionNames.VIEW_CART + "')")
+    public ApiResponse<CartResponse> getAll(UserDetails userDetails) {
+
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.USER_NOT_FOUND));
+
+        Cart cart = cartRepository.findByUser(user).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.CART_NOT_FOUND));
+
+        CartResponse response = mapToResponse(cart);
+
+        return ApiResponse.<CartResponse>builder()
+                .data(response)
+                .message(ApiMessages.Success.CART_FETCHED)
+                .build();
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('" + PermissionNames.UPDATE_CART + "')")
+    public ApiResponse<CartResponse> increaseQuantity(UserDetails userDetails, Long id, CartItemUpdateRequest request) {
+
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.USER_NOT_FOUND));
+
+        Cart cart = cartRepository.findByUser(user).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.CART_NOT_FOUND));
+
+        CartItem cartItem = cartItemRepository.findById(id).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.NOT_FOUND));
+
+        cartItem.setQuantity(cartItem.getQuantity() + request.quantity());
+        cartItemRepository.save(cartItem);
+        CartResponse response = mapToResponse(cart);
+
+        return ApiResponse.<CartResponse>builder()
+                .data(response)
+                .message(ApiMessages.Success.CART_UPDATED)
+                .build();
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('" + PermissionNames.UPDATE_CART + "')")
+    public ApiResponse<CartResponse> decreaseQuantity(UserDetails userDetails, Long id, CartItemUpdateRequest request) {
+
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.USER_NOT_FOUND));
+
+        Cart cart = cartRepository.findByUser(user).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.CART_NOT_FOUND));
+
+        CartItem cartItem = cartItemRepository.findById(id).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.NOT_FOUND));
+
+        cartItem.setQuantity(cartItem.getQuantity() - request.quantity());
+        cartItemRepository.save(cartItem);
+        CartResponse response = mapToResponse(cart);
+
+        return ApiResponse.<CartResponse>builder()
+                .data(response)
+                .message(ApiMessages.Success.CART_UPDATED)
+                .build();
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('" + PermissionNames.DELETE_CART + "')")
+    public ApiResponse<Void> clearCart(UserDetails userDetails) {
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.USER_NOT_FOUND));
+
+        Cart cart = cartRepository.findByUser(user).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.CART_NOT_FOUND));
+
+        cartRepository.delete(cart);
+
+        return ApiResponse.<Void>builder()
+                .message(ApiMessages.Success.CART_DELETED)
+                .build();
+    }
+
+    private CartResponse mapToResponse(Cart cart) {
 
         BigDecimal totalPrice = BigDecimal.ZERO;
         List<CartItemResponse>  cartItemResponseList = new ArrayList<>();

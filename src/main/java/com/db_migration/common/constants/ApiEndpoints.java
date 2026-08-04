@@ -43,6 +43,10 @@ public final class ApiEndpoints {
         public static final String BASE = VERSION + "/cart";
         public static final String ADD_ITEM = "/addItem";
         public static final String REMOVE_ITEM = "/removeItem/{id}";
+        public static final String GET_ALL = "/getAll";
+        public static final String INCREASE_QUANTITY = "/increaseQuantity/{id}";
+        public static final String DECREASE_QUANTITY = "/decreaseQuantity/{id}";
+        public static final String CLEAR_CART = "/clearCart";
     }
 
 }

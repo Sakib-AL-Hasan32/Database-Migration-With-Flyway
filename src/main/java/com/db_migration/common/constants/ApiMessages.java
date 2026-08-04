@@ -25,6 +25,9 @@ public final class ApiMessages {
         public static final String INVENTORY_ADJUSTED = "Inventory adjusted";
         public static final String ITEM_ADDED = "Item added";
         public static final String ITEM_DELETED = "Item deleted";
+        public static final String CART_FETCHED = "Cart fetched";
+        public static final String CART_UPDATED = "Cart updated";
+        public static final String CART_DELETED = "Cart deleted";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)

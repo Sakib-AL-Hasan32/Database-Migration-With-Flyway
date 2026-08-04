@@ -1,6 +1,7 @@
 package com.db_migration.cart.controller;
 
 import com.db_migration.cart.dto.request.CartItemCreateRequest;
+import com.db_migration.cart.dto.request.CartItemUpdateRequest;
 import com.db_migration.cart.dto.response.CartResponse;
 import com.db_migration.cart.service.CartService;
 import com.db_migration.common.constants.ApiEndpoints;
@@ -29,8 +30,23 @@ public class CartController {
         return ResponseEntity.status(HttpStatus.OK).body(cartService.removeItem(userDetails, id));
     }
 
+    @GetMapping(ApiEndpoints.Cart.GET_ALL)
+    public ResponseEntity<ApiResponse<CartResponse>> getAll(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.status(HttpStatus.OK).body(cartService.getAll(userDetails));
+    }
 
+    @PutMapping(ApiEndpoints.Cart.INCREASE_QUANTITY)
+    public ResponseEntity<ApiResponse<CartResponse>> increaseQuantity(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id, @Valid @RequestBody CartItemUpdateRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(cartService.increaseQuantity(userDetails, id, request));
+    }
 
+    @PutMapping(ApiEndpoints.Cart.DECREASE_QUANTITY)
+    public ResponseEntity<ApiResponse<CartResponse>> decreaseQuantity(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long id, @Valid @RequestBody CartItemUpdateRequest request) {
+        return ResponseEntity.status(HttpStatus.OK).body(cartService.decreaseQuantity(userDetails, id, request));
+    }
 
-
+    @DeleteMapping(ApiEndpoints.Cart.CLEAR_CART)
+    public ResponseEntity<ApiResponse<Void>> clearCart(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.status(HttpStatus.OK).body(cartService.clearCart(userDetails));
+    }
 }
