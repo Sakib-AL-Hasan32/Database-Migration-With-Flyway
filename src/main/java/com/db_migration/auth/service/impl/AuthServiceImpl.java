@@ -1,11 +1,15 @@
 package com.db_migration.auth.service.impl;
 
 import com.db_migration.auth.dto.request.LoginRequest;
+import com.db_migration.auth.dto.request.RefreshTokenRequest;
 import com.db_migration.auth.dto.request.RegisterRequest;
 import com.db_migration.auth.dto.response.LoginResponse;
+import com.db_migration.auth.dto.response.RefreshTokenResponse;
 import com.db_migration.auth.dto.response.RegisterResponse;
+import com.db_migration.auth.entity.RefreshToken;
 import com.db_migration.auth.entity.Role;
 import com.db_migration.auth.entity.User;
+import com.db_migration.auth.repository.RefreshTokenRepository;
 import com.db_migration.auth.repository.RoleRepository;
 import com.db_migration.auth.repository.UserRepository;
 import com.db_migration.auth.security.service.CustomUserDetailsService;
@@ -36,6 +40,7 @@ public class AuthServiceImpl implements AuthService {
     private final RefreshTokenService refreshTokenService;
     private final RoleRepository roleRepository;
     private final CustomUserDetailsService customUserDetailsService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     public ApiResponse<RegisterResponse> register(RegisterRequest registerRequest) {
@@ -99,6 +104,24 @@ public class AuthServiceImpl implements AuthService {
         return ApiResponse.<LoginResponse>builder()
                 .data(response)
                 .message(ApiMessages.Success.LOGIN_SUCCESS)
+                .build();
+    }
+
+    @Override
+    public ApiResponse<RefreshTokenResponse> refresh(RefreshTokenRequest refreshTokenRequest) {
+        RefreshToken refreshToken = refreshTokenService.getValidRefreshToken(refreshTokenRequest.refreshToken());
+        refreshToken.setRevoked(true);
+        refreshTokenRepository.save(refreshToken);
+        User user = refreshToken.getUser();
+        String newRefreshToken = refreshTokenService.generateRefreshToken(user);
+        String newAccessToken = jwtTokenService.generateAccessToken(user);
+        RefreshTokenResponse response = new RefreshTokenResponse(
+                newAccessToken,
+                newRefreshToken
+        );
+        return ApiResponse.<RefreshTokenResponse>builder()
+                .data(response)
+                .message(ApiMessages.Success.TOKEN_REFRESHED)
                 .build();
     }
 }

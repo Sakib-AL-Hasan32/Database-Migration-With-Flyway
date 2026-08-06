@@ -4,6 +4,9 @@ import com.db_migration.auth.entity.RefreshToken;
 import com.db_migration.auth.entity.User;
 import com.db_migration.auth.repository.RefreshTokenRepository;
 import com.db_migration.auth.security.service.RefreshTokenService;
+import com.db_migration.common.constants.ApiMessages;
+import com.db_migration.common.exception.InvalidTokenException;
+import com.db_migration.common.exception.ResourceNotFound;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -67,5 +70,17 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         refreshTokenRepository.save(refreshToken);
 
         return rawToken;
+    }
+
+    @Override
+    public RefreshToken getValidRefreshToken(String token) {
+        RefreshToken refreshToken = refreshTokenRepository.findByTokenHash(generateHashToken(token)).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.REFRESH_TOKEN_NOT_FOUND));
+        if(refreshToken.isRevoked()) {
+            throw new InvalidTokenException(ApiMessages.Error.REFRESH_TOKEN_REVOKED);
+        }
+        if (refreshToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new InvalidTokenException(ApiMessages.Error.REFRESH_TOKEN_EXPIRED);
+        }
+        return refreshToken;
     }
 }
