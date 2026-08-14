@@ -32,6 +32,7 @@ public final class ApiMessages {
         public static final String ORDER_CANCELLED = "Order cancelled";
         public static final String ORDER_FETCHED = "Order fetched";
         public static final String TOKEN_REFRESHED = "Token refreshed";
+        public static final String LOGOUT_SUCCESS = "Logout successfully!";
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -59,5 +60,6 @@ public final class ApiMessages {
         public static final String REFRESH_TOKEN_NOT_FOUND = "Refresh token not found";
         public static final String REFRESH_TOKEN_REVOKED = "Refresh token revoked";
         public static final String REFRESH_TOKEN_EXPIRED = "Refresh token expired";
+        public static final String INVALID_TOKEN = "Invalid token";
     }
 }

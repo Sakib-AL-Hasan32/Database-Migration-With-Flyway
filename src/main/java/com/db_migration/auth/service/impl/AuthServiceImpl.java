@@ -1,6 +1,7 @@
 package com.db_migration.auth.service.impl;
 
 import com.db_migration.auth.dto.request.LoginRequest;
+import com.db_migration.auth.dto.request.LogoutRequest;
 import com.db_migration.auth.dto.request.RefreshTokenRequest;
 import com.db_migration.auth.dto.request.RegisterRequest;
 import com.db_migration.auth.dto.response.LoginResponse;
@@ -12,21 +13,22 @@ import com.db_migration.auth.entity.User;
 import com.db_migration.auth.repository.RefreshTokenRepository;
 import com.db_migration.auth.repository.RoleRepository;
 import com.db_migration.auth.repository.UserRepository;
-import com.db_migration.auth.security.service.CustomUserDetailsService;
 import com.db_migration.auth.security.service.JwtTokenService;
 import com.db_migration.auth.security.service.RefreshTokenService;
 import com.db_migration.auth.service.AuthService;
+import com.db_migration.auth.service.TokenBlacklistService;
 import com.db_migration.common.constants.ApiMessages;
 import com.db_migration.common.constants.RoleNames;
+import com.db_migration.common.exception.InvalidTokenException;
 import com.db_migration.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -39,8 +41,8 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenService jwtTokenService;
     private final RefreshTokenService refreshTokenService;
     private final RoleRepository roleRepository;
-    private final CustomUserDetailsService customUserDetailsService;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Override
     public ApiResponse<RegisterResponse> register(RegisterRequest registerRequest) {
@@ -109,12 +111,17 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ApiResponse<RefreshTokenResponse> refresh(RefreshTokenRequest refreshTokenRequest) {
+
         RefreshToken refreshToken = refreshTokenService.getValidRefreshToken(refreshTokenRequest.refreshToken());
         refreshToken.setRevoked(true);
         refreshTokenRepository.save(refreshToken);
+
+        // Access token revoke.
+
         User user = refreshToken.getUser();
         String newRefreshToken = refreshTokenService.generateRefreshToken(user);
         String newAccessToken = jwtTokenService.generateAccessToken(user);
+
         RefreshTokenResponse response = new RefreshTokenResponse(
                 newAccessToken,
                 newRefreshToken
@@ -122,6 +129,27 @@ public class AuthServiceImpl implements AuthService {
         return ApiResponse.<RefreshTokenResponse>builder()
                 .data(response)
                 .message(ApiMessages.Success.TOKEN_REFRESHED)
+                .build();
+    }
+
+    @Override
+    public ApiResponse<Void> logout(String authorizationHeader, LogoutRequest logoutRequest) {
+        String accessToken = authorizationHeader.substring("Bearer ".length());
+        Duration ttl;
+        try {
+            ttl = jwtTokenService.getRemainingLifetime(accessToken);
+        } catch (RuntimeException exception) {
+            throw new InvalidTokenException(ApiMessages.Error.INVALID_TOKEN);
+        }
+
+        tokenBlacklistService.blacklist(accessToken, ttl);
+
+        RefreshToken refreshToken = refreshTokenRepository.findByTokenHash(logoutRequest.refreshToken()).orElseThrow(() -> new InvalidTokenException(ApiMessages.Error.INVALID_TOKEN));
+        refreshToken.setRevoked(true);
+        refreshTokenRepository.save(refreshToken);
+
+        return ApiResponse.<Void>builder()
+                .message(ApiMessages.Success.LOGOUT_SUCCESS)
                 .build();
     }
 }

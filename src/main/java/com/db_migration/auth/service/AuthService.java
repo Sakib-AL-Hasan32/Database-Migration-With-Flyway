@@ -1,6 +1,7 @@
 package com.db_migration.auth.service;
 
 import com.db_migration.auth.dto.request.LoginRequest;
+import com.db_migration.auth.dto.request.LogoutRequest;
 import com.db_migration.auth.dto.request.RefreshTokenRequest;
 import com.db_migration.auth.dto.request.RegisterRequest;
 import com.db_migration.auth.dto.response.LoginResponse;
@@ -13,4 +14,5 @@ public interface AuthService {
     ApiResponse<RegisterResponse> register(RegisterRequest registerRequest);
     ApiResponse<LoginResponse> login(LoginRequest loginRequest);
     ApiResponse<RefreshTokenResponse> refresh(RefreshTokenRequest refreshTokenRequest);
+    ApiResponse<Void> logout(String authorizationHeader, LogoutRequest logoutRequest);
 }

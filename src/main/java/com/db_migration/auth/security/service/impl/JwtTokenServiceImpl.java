@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 @Service
@@ -39,7 +40,6 @@ public class JwtTokenServiceImpl implements JwtTokenService {
         for (Role role : user.getRoles()) {
             roles.add(role.getName());
         }
-
         Map<String, Object> claims = Map.of(
                 "userId", user.getId(),
                 "roles", roles
@@ -69,6 +69,13 @@ public class JwtTokenServiceImpl implements JwtTokenService {
         Claims claims = extractClaimsFromToken(token);
         return claims.getSubject();
 
+    }
+
+    @Override
+    public Duration getRemainingLifetime(String token) {
+        Date expiration = extractClaimsFromToken(token).getExpiration();
+        long remainingMillis = expiration.toInstant().toEpochMilli() - Instant.now().toEpochMilli();
+        return Duration.ofMillis(Math.max(remainingMillis, 0));
     }
 
     @Override

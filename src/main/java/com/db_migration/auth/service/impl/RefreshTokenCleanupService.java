@@ -23,6 +23,6 @@ public class RefreshTokenCleanupService {
 
         refreshTokenRepository.deleteByExpiresAtBefore(LocalDateTime.now());
 
-        log.info("Expired refresh token cleanup completed.");
+        log.info("Finished expired refresh token cleanup...");
     }
 }

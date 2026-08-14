@@ -2,6 +2,7 @@ package com.db_migration.auth.security.filter;
 
 import com.db_migration.auth.security.service.CustomUserDetailsService;
 import com.db_migration.auth.security.service.JwtTokenService;
+import com.db_migration.auth.service.TokenBlacklistService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,6 +23,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenService jwtTokenService;
     private final CustomUserDetailsService customUserDetailsService;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Override
     @NullMarked
@@ -41,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String username = jwtTokenService.getUsernameFromToken(token);
             if (username != null) {
                 UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
-                if (jwtTokenService.isTokenValid(token, userDetails)) {
+                if (jwtTokenService.isTokenValid(token, userDetails) && !tokenBlacklistService.isBlacklisted(token)) {
                     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,

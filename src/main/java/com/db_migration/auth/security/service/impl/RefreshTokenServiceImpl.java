@@ -55,6 +55,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public String generateRefreshToken(User user) {
+
         LocalDateTime createdAt = LocalDateTime.now();
         LocalDateTime expiresAt = LocalDateTime.now().plus(refreshTokenExpiration);
 
@@ -74,13 +75,16 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
     @Override
     public RefreshToken getValidRefreshToken(String token) {
+
         RefreshToken refreshToken = refreshTokenRepository.findByTokenHash(generateHashToken(token)).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.REFRESH_TOKEN_NOT_FOUND));
+
         if(refreshToken.isRevoked()) {
             throw new InvalidTokenException(ApiMessages.Error.REFRESH_TOKEN_REVOKED);
         }
         if (refreshToken.getExpiresAt().isBefore(LocalDateTime.now())) {
             throw new InvalidTokenException(ApiMessages.Error.REFRESH_TOKEN_EXPIRED);
         }
+
         return refreshToken;
     }
 }
