@@ -37,6 +37,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(tokenBytes);
     }
 
+    @Override
     public String generateHashToken(String rawToken) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

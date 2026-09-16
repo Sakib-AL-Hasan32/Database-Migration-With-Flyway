@@ -4,6 +4,7 @@ import com.db_migration.auth.entity.RefreshToken;
 import com.db_migration.auth.entity.User;
 
 public interface RefreshTokenService {
+    String generateHashToken(String rawToken);
     String generateRefreshToken(User user);
     RefreshToken getValidRefreshToken(String token);
 }

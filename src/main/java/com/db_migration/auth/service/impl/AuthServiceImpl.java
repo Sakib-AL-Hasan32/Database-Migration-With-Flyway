@@ -144,7 +144,7 @@ public class AuthServiceImpl implements AuthService {
 
         tokenBlacklistService.blacklist(accessToken, ttl);
 
-        RefreshToken refreshToken = refreshTokenRepository.findByTokenHash(logoutRequest.refreshToken()).orElseThrow(() -> new InvalidTokenException(ApiMessages.Error.INVALID_TOKEN));
+        RefreshToken refreshToken = refreshTokenRepository.findByTokenHash(refreshTokenService.generateHashToken(logoutRequest.refreshToken())).orElseThrow(() -> new InvalidTokenException(ApiMessages.Error.INVALID_TOKEN));
         refreshToken.setRevoked(true);
         refreshTokenRepository.save(refreshToken);
 
