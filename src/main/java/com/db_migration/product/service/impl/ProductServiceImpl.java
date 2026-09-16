@@ -17,6 +17,10 @@ import com.db_migration.product.repository.CategoryRepository;
 import com.db_migration.product.repository.ProductRepository;
 import com.db_migration.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -69,6 +73,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @PreAuthorize("hasAuthority('" + PermissionNames.VIEW_PRODUCT + "')")
+    @Cacheable(cacheNames = "productList", key = "#pageable")
     public ApiResponse<PageResponse<ProductResponse>> getAll(Pageable pageable) {
 
         Page<Product> page = productRepository.findAll(pageable);
@@ -97,6 +102,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @PreAuthorize("hasAuthority('" + PermissionNames.UPDATE_PRODUCT + "')")
+    @Caching(
+            put = {
+                    @CachePut(cacheNames = "product", key = "#id")
+    },
+            evict = {
+                    @CacheEvict(cacheNames = "productList", allEntries = true)
+    })
     public ApiResponse<ProductResponse> update(ProductUpdateRequest productUpdateRequest, Long id) {
 
         Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.PRODUCT_NOT_FOUND));
@@ -120,6 +132,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @PreAuthorize("hasAuthority('" + PermissionNames.DELETE_PRODUCT + "')")
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "product", key = "#id"),
+            @CacheEvict(cacheNames = "productList", allEntries = true)
+    })
     public ApiResponse<Void> delete(Long id) {
         if(!productRepository.existsById(id)) {
             throw new ResourceNotFound(ApiMessages.Error.PRODUCT_NOT_FOUND);

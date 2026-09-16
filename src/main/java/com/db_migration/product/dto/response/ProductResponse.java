@@ -2,7 +2,7 @@ package com.db_migration.product.dto.response;
 
 import java.math.BigDecimal;
 
-public record ProductResponse(
+public record ProductResponse (
         Long id,
         String name,
         String description,
