@@ -8,10 +8,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 @EnableCaching
-public class DatabaseMigrationWithFlywayApplication {
+public class ecommerce {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DatabaseMigrationWithFlywayApplication.class, args);
+		SpringApplication.run(ecommerce.class, args);
 	}
 
 }

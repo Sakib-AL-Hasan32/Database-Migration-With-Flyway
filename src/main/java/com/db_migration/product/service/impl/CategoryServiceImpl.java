@@ -13,6 +13,10 @@ import com.db_migration.product.entity.Category;
 import com.db_migration.product.repository.CategoryRepository;
 import com.db_migration.product.service.CategoryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -56,6 +60,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @PreAuthorize("hasAuthority('" + PermissionNames.VIEW_CATEGORY + "')")
+    @Cacheable(cacheNames = "categoryList", key = "#pageable")
     public ApiResponse<PageResponse<CategoryResponse>> getAll(Pageable pageable) {
         Page<Category> page = categoryRepository.findAll(pageable);
         List<CategoryResponse> responses = new ArrayList<>();
@@ -92,6 +97,13 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @PreAuthorize("hasAuthority('" + PermissionNames.UPDATE_CATEGORY + "')")
+    @Caching(
+            put = {
+                    @CachePut(cacheNames = "category", key = "#id")
+            },
+            evict = {
+                    @CacheEvict(cacheNames = "categoryList", allEntries = true)
+            })
     public ApiResponse<CategoryResponse> update(CategoryUpdateRequest categoryUpdateRequest, Long id) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFound(ApiMessages.Error.CATEGORY_NOT_FOUND));
         category.setName(categoryUpdateRequest.name());
@@ -115,6 +127,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @PreAuthorize("hasAuthority('" + PermissionNames.DELETE_CATEGORY + "')")
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "category", key = "#id"),
+            @CacheEvict(cacheNames = "categoryList", allEntries = true)
+    })
     public ApiResponse<Void> delete(Long id) {
         if(!categoryRepository.existsById(id)) {
             throw new ResourceNotFound(ApiMessages.Error.CATEGORY_NOT_FOUND);
