@@ -32,6 +32,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     @PreAuthorize("hasAuthority('" + PermissionNames.CREATE_CATEGORY + "')")
+    @Caching(evict = {
+            @CacheEvict(cacheNames = "category", key = "#id"),
+            @CacheEvict(cacheNames = "categoryList", allEntries = true)
+    })
     public ApiResponse<CategoryResponse> create(CategoryCreateRequest categoryCreateRequest) {
         if(categoryRepository.existsByName(categoryCreateRequest.name())) {
             throw new ResourceAlreadyExistsException(ApiMessages.Error.CATEGORY_ALREADY_EXISTS);

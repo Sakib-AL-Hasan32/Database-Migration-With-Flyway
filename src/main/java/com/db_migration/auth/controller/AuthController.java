@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -211,13 +212,8 @@ public class AuthController {
     @Operation(
             summary = "Logout user",
             description = "Logs out the authenticated user by invalidating the provided access token and refresh token.",
-            parameters = {
-                    @Parameter(
-                            name = "Authorization",
-                            description = "Bearer access token.",
-                            required = true,
-                            example = "Bearer eyJhbGciOiJIUzI1NiJ9..."
-                    )
+            security = {
+                    @SecurityRequirement(name = "bearerAuth")
             },
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     required = true,
